@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'mvn clean verify'
+                sh 'mvn clean verify -f ./JHotDraw'
             }
         }
         stage('Code Quality') {
