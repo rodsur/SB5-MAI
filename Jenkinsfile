@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+    environment {
+        SONAR_AUTH_TOKEN = credentials('sonarqubeAuth')
+    }
     stages {
         stage('Build') {
             steps {
@@ -9,7 +11,7 @@ pipeline {
         }
         stage('Code Quality') {
             steps {
-                echo 'Testing..'
+                sh 'mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -f ./JHotDraw'
             }
         }
         stage('Deploy') {
