@@ -3,20 +3,25 @@ pipeline {
     environment {
         SONAR_AUTH_TOKEN = credentials('sonarqubeAuth')
     }
+
     stages {
         stage('Build') {
             steps {
                 sh 'mvn clean verify -f ./JHotDraw'
             }
         }
-        stage('Code Quality') {
+
+        stage('SonarQube Analysis') {
             steps {
-                sh 'mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -f ./JHotDraw'
+                withSonarQubeEnv('local sonarqube'){
+                    sh 'mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -f ./JHotDraw'
+                }
             }
         }
-        stage('Deploy') {
+
+        stage('Quality Check') {
             steps {
-                echo 'Deploying....'
+                waitForQualityGate abortPipeline: true
             }
         }
     }
